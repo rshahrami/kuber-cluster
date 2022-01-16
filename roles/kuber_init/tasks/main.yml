@@ -1,0 +1,15 @@
+---
+# tasks file for kuber_init
+
+- name: initialize kubernetes cluster using kubeadm
+  command: kubeadm init --pod-network-cidr="{{ network_cidr }}" --node-name kuber-master --apiserver-advertise-address="{{ apiserver_address }}"
+
+- name: setup kubeconfig non-root user
+  shell: "{{ item }}"
+  with_items:
+    - mkdir -p $HOME/.kube
+    - sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
+    - sudo chown $(id -u):$(id -g) $HOME/.kube/config
+  
+- name: setup kubeconfig root user
+  shell: export KUBECONFIG=/etc/kubernetes/admin.conf
