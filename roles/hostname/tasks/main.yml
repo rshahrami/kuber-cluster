@@ -4,6 +4,10 @@
 - name: set hostname and ip to /etc/hosts
   shell: |
     cat <<EOF | sudo tee /etc/hosts
+
+    127.0.0.1   localhost localhost.localdomain localhost4 localhost4.localdomain4
+    ::1         localhost localhost.localdomain localhost6 localhost6.localdomain6
+
     192.168.143.21  kuber-master
     192.168.143.41  kuber-worker1
     192.168.143.42  kuber-worker2
