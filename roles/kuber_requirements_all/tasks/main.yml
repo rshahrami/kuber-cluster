@@ -16,7 +16,7 @@
 - name: check active br_netfilter
   command: lsmod | grep br_netfilter
   register: result
-  ignore_errors: yes
+  ignore_errors: true
 
 - name: add br_netfilter module
   modprobe:
