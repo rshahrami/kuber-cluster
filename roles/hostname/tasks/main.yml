@@ -10,7 +10,7 @@
     192.168.143.42  kuber-worker2
     192.168.143.43  kuber-worker3
     192.168.143.44  kuber-worker4
-    192.168.143.22  kuber-worker5
+
     EOF
 
 - name: update hostname

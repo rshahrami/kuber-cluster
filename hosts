@@ -4,7 +4,6 @@ kuber-worker1 ansible_user=root new_hostname=kuber-worker1
 kuber-worker2 ansible_user=root new_hostname=kuber-worker2
 kuber-worker3 ansible_user=root new_hostname=kuber-worker3
 kuber-worker4 ansible_user=root new_hostname=kuber-worker4
-kuber-worker5 ansible_user=root new_hostname=kuber-worker5
 
 
 [master_kuber]
@@ -15,6 +14,5 @@ kuber-worker1 ansible_user=root
 kuber-worker2 ansible_user=root
 kuber-worker3 ansible_user=root
 kuber-worker4 ansible_user=root
-kuber-worker5 ansible_user=root
 
 
