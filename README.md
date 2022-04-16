@@ -12,6 +12,20 @@ wget https://download.docker.com/linux/centos/7/x86_64/stable/Packages/docker-ce
 
 # Download all package rpm for install kubectl, kubelet and kubeadm
 
+use below address for find version of kubectl, kubelet and kubeadm. befor use kubectl, let and adm rpm package install kubernetes-cni and cri-tools depe0ndency:
 
+```bash
+  
+https://packages.cloud.google.com/yum/repos/kubernetes-el7-x86_64/repodata/primary.xml
+  
+```
 
+after find desired version user 'location href=' for download package. We insert everything after 'location href=' to the end of below url.
+  
+```bash
+  
+https://packages.cloud.google.com/yum/repos/kubernetes-el7-x86_64/
+  
+```  
+  
 </div>
