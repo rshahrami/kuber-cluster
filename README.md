@@ -28,7 +28,7 @@ https://packages.cloud.google.com/yum/repos/kubernetes-el7-x86_64/repodata/prima
   
 ```
 
-after find desired version user 'location href=' for download package. We insert everything after 'location href=' to the end of below url.
+We download the packages according to our desired version. To download the packages, we have to go to the location href=' section in following address. We insert everything after 'location href=' to the end of below url.
   
 ```bash
   
