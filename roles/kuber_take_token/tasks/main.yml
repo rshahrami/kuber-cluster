@@ -7,4 +7,4 @@
 
 
 - name: copy join command to local file
-  local_action: copy content="{{ join_command.stdout_lines[0] }}" dest=/ansible/kuber-cluster/roles/kuber_add_worker/files/join-command
+  local_action: copy content="{{ join_command.stdout_lines[0] }}" dest=files/join-command

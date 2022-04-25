@@ -49,16 +49,36 @@
     append: yes
 
 
-- name: remove docker files
-  file:
-    path: "{{ item }}"
-    state: absent
+# - name: remove docker files
+#   file:
+#     path: "{{ item }}"
+#     state: absent
+#   with_items:
+#     - /root/docker-ce-19.03.9-3.el7.x86_64.rpm
+#     - /root/docker-ce-cli-19.03.9-3.el7.x86_64.rpm
+#     - /root/containerd.io-1.2.6-3.3.el7.x86_64.rpm
+
+
+- name: load docker images 
+  shell: docker load < {{ item }}
   with_items:
-    - /root/docker-ce-19.03.9-3.el7.x86_64.rpm
-    - /root/docker-ce-cli-19.03.9-3.el7.x86_64.rpm
-    - /root/containerd.io-1.2.6-3.3.el7.x86_64.rpm
+  - calico-cni-v3.22.2.tar
+  - calico-kube-controllers-v3.22.2.tar
+  - calico-node-v3.22.2.tar
+  - calico-pod2daemon-flexvol-v3.22.2.tar
+  - coredns-v1.8.6.tar
+  - etcd-3.5.1-0.tar
+  - jdk-8u221-linux-x64.tar.gz
+  - kube-apiserver-v1.23.5.tar
+  - kube-controller-manager-v1.23.5.tar
+  - kube-proxy-v1.23.5.tar
+  - kube-scheduler-v1.23.5.tar
+  - pause-3.6.tar
+
 
 
 - name: Reboot
   reboot:
     reboot_timeout: 180
+    pre_reboot_delay: 10
+    post_reboot_delay: 20

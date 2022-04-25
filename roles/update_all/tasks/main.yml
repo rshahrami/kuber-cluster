@@ -8,10 +8,16 @@
   yum:
     name: epel-release
     state: latest
-  retries: 2
-  delay: 5
+
+- name: install epel-release
+  yum:
+    name: epel-release
+    state: latest
+
 
 - name: Reboot
   reboot:
     reboot_timeout: 180
+    pre_reboot_delay: 10
+    post_reboot_delay: 20
   

@@ -3,13 +3,13 @@
 
 - name: Create a directory - java directory
   file:
-    path: /usr/java
+    path: "{{ JAVA_DIRECTORY }}"
     state: directory
 
 - name: Unarchive a java file that is already on the remote machine
   unarchive:
     src: files/jdk-8u221-linux-x64.tar.gz
-    dest: /usr/java/
+    dest: "{{ JAVA_DIRECTORY }}"
     remote_src: no
   
 
@@ -27,18 +27,18 @@
 - name: update alternatives for java
   alternatives:
     name: java
-    path: /usr/java/jdk1.8.0_221/bin/java
+    path: "{{ JAVA_DIRECTORY }}"/jdk1.8.0_221/bin/java
     link: /usr/bin/java
     priority: 1
 
 - name: update alternatives for javac
   alternatives:
     name: javac
-    path: /usr/java/jdk1.8.0_221/bin/javac
+    path: "{{ JAVA_DIRECTORY }}"/jdk1.8.0_221/bin/javac
     link: /usr/bin/javac
     priority: 1
 
 - name: Correct java version selected
   alternatives:
     name: java
-    path: /usr/java/jdk1.8.0_221/bin/java
+    path: "{{ JAVA_DIRECTORY }}"/jdk1.8.0_221/bin/java
