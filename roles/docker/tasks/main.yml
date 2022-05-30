@@ -1,0 +1,119 @@
+---
+# tasks file for docker
+
+- name: copy docker rpm file to server
+  copy:
+    src: "{{ item.name }}"
+    dest: /root/
+  loop:
+    - { name: "{{ dockerFileDirectory }}/docker/files/docker-ce-19.03.9-3.el7.x86_64.rpm", owner: administrator, group: administrator}
+    - { name: "{{ dockerFileDirectory }}/docker/files/docker-ce-cli-19.03.9-3.el7.x86_64.rpm", owner: administrator, group: administrator}
+    - { name: "{{ dockerFileDirectory }}/docker/files/containerd.io-1.2.6-3.3.el7.x86_64.rpm", owner: administrator, group: administrator}
+  when: ansible_distribution == 'CentOS' or ansible_distribution == 'Red Hat Enterprise Linux'
+
+
+- name: copy docker deb file to server
+  copy:
+    src: "{{ item.name }}"
+    dest: /root/
+  loop:
+    - { name: "{{ dockerFileDirectory }}/docker/files/docker-ce_19.03.15_3-0_ubuntu-focal_amd64.deb", owner: administrator, group: administrator}
+    - { name: "{{ dockerFileDirectory }}/docker/files/docker-ce-cli_19.03.15_3-0_ubuntu-focal_amd64.deb", owner: administrator, group: administrator}
+    - { name: "{{ dockerFileDirectory }}/docker/files/containerd.io_1.6.4-1_amd64.deb", owner: administrator, group: administrator}
+  when: ansible_distribution == "Ubuntu"
+
+
+
+- name: install docker rpm pakages
+  yum:
+    name: "{{ item.name }}"
+    state: present
+  with_items:
+    - { name: /root/docker-ce-cli-19.03.9-3.el7.x86_64.rpm }
+    - { name: /root/containerd.io-1.2.6-3.3.el7.x86_64.rpm }
+    - { name: /root/docker-ce-19.03.9-3.el7.x86_64.rpm }
+  when: ansible_distribution == 'CentOS' or ansible_distribution == 'Red Hat Enterprise Linux'
+
+
+- name: install docker deb pakages
+  apt:
+    deb: "{{ item.name }}"
+    state: present
+  with_items:
+    - { name: /root/docker-ce-cli_19.03.15_3-0_ubuntu-focal_amd64.deb }
+    - { name: /root/containerd.io_1.6.4-1_amd64.deb }
+    - { name: /root/docker-ce_19.03.15_3-0_ubuntu-focal_amd64.deb }
+  when: ansible_distribution == "Ubuntu"
+
+
+- name: enable service docker
+  systemd:
+    name: "{{ item }}"
+    enabled: yes
+  with_items:
+    - docker
+    - containerd
+
+- name: start service docker
+  systemd:
+    state: started
+    name: "{{ item }}"
+  with_items:
+    - docker
+    - containerd
+
+
+- name: add group docker
+  group:
+    name: docker
+    state: present
+
+- name: usermod docker
+  user:
+    name: administrator
+    groups: [docker]
+    append: yes
+
+
+# - name: remove docker files
+#   file:
+#     path: "{{ item }}"
+#     state: absent
+#   with_items:
+#     - /root/docker-ce-19.03.9-3.el7.x86_64.rpm
+#     - /root/docker-ce-cli-19.03.9-3.el7.x86_64.rpm
+#     - /root/containerd.io-1.2.6-3.3.el7.x86_64.rpm
+
+
+# - name: copy docker deb file to server
+#   copy:
+#     src: "{{ item }}"
+#     dest: /root/
+#   loop:
+#     - { name: files/docker-ce_19.03.15~3-0~ubuntu-focal_amd64.deb, owner: administrator, group: administrator}
+#     - { name: files/docker-ce-cli_19.03.15~3-0~ubuntu-focal_amd64.deb, owner: administrator, group: administrator}
+#     - { name: files/containerd.io_1.6.4-1_amd64.deb, owner: administrator, group: administrator}
+
+
+- name: load docker images 
+  shell: docker load < {{ item }}
+  with_items:
+  - calico-cni-v3.22.2.tar
+  - calico-kube-controllers-v3.22.2.tar
+  - calico-node-v3.22.2.tar
+  - calico-pod2daemon-flexvol-v3.22.2.tar
+  - coredns-v1.8.6.tar
+  - etcd-3.5.1-0.tar
+  - kube-apiserver-v1.23.5.tar
+  - kube-controller-manager-v1.23.5.tar
+  - kube-proxy-v1.23.5.tar
+  - kube-scheduler-v1.23.5.tar
+  - pause-3.6.tar
+
+
+
+- name: Reboot
+  reboot:
+    reboot_timeout: 180
+    pre_reboot_delay: 10
+    post_reboot_delay: 30

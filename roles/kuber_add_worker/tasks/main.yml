@@ -1,0 +1,23 @@
+---
+# tasks file for kuber_add_worker
+
+
+- name: copy the join command to worker nodes
+  copy:
+    src: roles/kuber_take_token/files/join-command
+    dest: /root/join-command.sh
+    mode: 0777
+
+- name: join node to cluster
+  shell: |
+    sh /root/join-command.sh
+
+
+- name: remove join-command in local machin or master nor
+  local_action: file path=roles/kuber_take_token/files/join-command state=absent
+
+
+- name: remove join-command.sh in worker node
+  file:
+    path: /root/join-command.sh
+    state: absent

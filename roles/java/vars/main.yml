@@ -1,0 +1,4 @@
+---
+# vars file for java
+
+JAVA_DIRECTORY: /usr/java

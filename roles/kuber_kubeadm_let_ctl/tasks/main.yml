@@ -1,0 +1,73 @@
+---
+# tasks file for kuber_kubeadm_let_ctl
+
+# - name: add sd kubernetes.repo
+#   yum_repository:
+#     name: kubernetes
+#     baseurl: https://packages.cloud.google.com/yum/repos/kubernetes-el7-\$basearch
+#     enabled: yes
+#     gpgcheck: yes
+#     repo_gpgcheck: yes
+#     gpgkey: https://packages.cloud.google.com/yum/doc/yum-key.gpg https://packages.cloud.google.com/yum/doc/rpm-package-key.gpg
+#     exclude:
+#       - kubelet
+#       - kubeadm
+#       - kubectl
+#     description: kubernetes
+#   when: ansible_distribution == 'CentOS' or ansible_distribution == 'Red Hat Enterprise Linux'
+    
+
+- name: disable selinux
+  selinux:
+    state: disabled
+  when: ansible_distribution == 'CentOS' or ansible_distribution == 'Red Hat Enterprise Linux'
+
+- name: ensure selinux is set to enforcing module
+  lineinfile:
+    path: /etc/selinux/config
+    regexp: '^SELINUX=disabled$'
+    line: SELINUX=permissive
+  when: ansible_distribution == 'CentOS' or ansible_distribution == 'Red Hat Enterprise Linux'
+
+- name: Reboot
+  reboot:
+    reboot_timeout: 180
+    pre_reboot_delay: 10
+    post_reboot_delay: 20
+  when: ansible_distribution == 'CentOS' or ansible_distribution == 'Red Hat Enterprise Linux'
+
+- name: install kubeadm kubelet and kubectl rpm package
+  shell: |
+    yum install -y 4d300a7655f56307d35f127d99dc192b6aa4997f322234e754f16aaa60fd8906-cri-tools-1.23.0-0.x86_64.rpm \
+    db7cb5cb0b3f6875f54d10f02e625573988e3e91fd4fc5eef0b1876bb18604ad-kubernetes-cni-0.8.7-0.x86_64.rpm \
+    d39aa6eb38a6a8326b7e88c622107327dfd02ac8aaae32eceb856643a2ad9981-kubelet-1.23.5-0.x86_64.rpm \
+    ab0e12925be5251baf5dd3b31493663d46e4a7b458c7a5b6b717f4ae87a81bd4-kubeadm-1.23.5-0.x86_64.rpm \
+    96b208380314a19ded917eaf125ed748f5e2b28a3cc8707a10a76a9f5b61c0df-kubectl-1.23.5-0.x86_64.rpm \
+    01b97b0ddb967d0ed9fd78327a784efbfea8cd0d9789f5bab8b9bbfe94477c60-rkt-1.27.0-1.x86_64.rpm \
+    --disableexcludes=kubernetes
+  when: ansible_distribution == 'CentOS' or ansible_distribution == 'Red Hat Enterprise Linux'
+
+
+
+- name: install kubeadm kubelet and kubectl deb package
+  shell: |
+    apt install -y cri-tools_1.23.0-00_amd64_6d748dd24f90b3696e35ea3d9199e2f76ea4793371f0d0658498b1f96d9f03d3.deb \
+    kubernetes-cni_0.8.7-00_amd64_ca2303ea0eecadf379c65bad855f9ad7c95c16502c0e7b3d50edcb53403c500f.deb \
+    kubelet_1.23.5-00_amd64_9679f0eb4bc40fe17110967eac853f0381f1fb7a29d319ed9b3c48592b83d7cd.deb \
+    kubeadm_1.23.5-00_amd64_642bf36ddafb1b8a3d528708d50a68df145747ef397b55546f26879be1b81223.deb \
+    kubectl_1.23.5-00_amd64_d5f985a62ca1798ff59029294cf4bbf7e6e8d4ffe66559a1c9b0559a37c580f7.deb \
+    rkt_1.29.0-1_amd64_ea87d719359030f33fd48890875c934135c62eccda72c37d79ff604307b905b5.deb 
+  when: ansible_distribution == "Ubuntu"
+
+
+- name: install kubeadm kubelet and kubectl deb package
+  shell: |
+    apt-mark hold kubelet kubeadm kubectl
+  when: ansible_distribution == "Ubuntu"
+
+- name: restart kubelet
+  service:
+    name: kubelet
+    state: started
+    enabled: yes
+ 
