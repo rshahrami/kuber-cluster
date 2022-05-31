@@ -1,0 +1,80 @@
+---
+# tasks file for kuber_kubeadm_let_ctl_secondary
+
+- name: get cni in local machine
+  local_action: uri url=https://github.com/containernetworking/plugins/releases/download/{{ CNI_VERSION }}/cni-plugins-linux-{{ ARCH }}-{{ CNI_VERSION }}.tgz \
+                src=/home/ubuntu/kubernetes/ansible/kuber-cluster/roles/kuber_kubeadm_let_ctl_secondary/files/cni-plugins-linux-{{ ARCH }}-{{ CNI_VERSION }}.tgz
+                
+
+- name: get crictl in local machine
+  local_action: uri url=https://github.com/kubernetes-sigs/cri-tools/releases/download/{{ CRICTL_VERSION }}/crictl-{{ CRICTL_VERSION }}-linux-{{ ARCH }}.tar.gz \
+                src=/home/ubuntu/kubernetes/ansible/kuber-cluster/roles/kuber_kubeadm_let_ctl_secondary/files/crictl-{{ CRICTL_VERSION }}-linux-{{ ARCH }}.tar.gz
+
+
+- name: get kubelet.service in local machine
+  local_action: uri url=https://raw.githubusercontent.com/kubernetes/release/{{ RELEASE_VERSION }}/cmd/kubepkg/templates/latest/deb/kubelet/lib/systemd/system/kubelet.service \
+                src=/home/ubuntu/kubernetes/ansible/kuber-cluster/roles/kuber_kubeadm_let_ctl_secondary/files/kubelet.service
+
+
+- name: get kubeadm.conf in local machine
+  local_action: uri url=https://raw.githubusercontent.com/kubernetes/release/{{ RELEASE_VERSION }}/cmd/kubepkg/templates/latest/deb/kubeadm/10-kubeadm.conf \
+                src=/home/ubuntu/kubernetes/ansible/kuber-cluster/roles/kuber_kubeadm_let_ctl_secondary/files/10-kubeadm.conf
+
+
+- name: Create a directory - java directory
+  file:
+    path: "{{ item }}"
+    state: directory
+  with_items:
+    - "{{ CNI_DIRECTORY }}"
+    - "{{ DOWNLOAD_DIR }}"
+    - /etc/systemd/system
+    - /etc/systemd/system/kubelet.service.d
+
+
+- name: copy kubeadm, kubectl and kubelet to remote machine
+  copy:
+    src: /home/ubuntu/kubernetes/ansible/kuber-cluster/roles/kuber_kubeadm_let_ctl_secondary/files/kubelet.service
+    dest: /etc/systemd/system/kubelet.service
+
+
+- name: cahnge setting of calico.yaml
+  replace:
+    path: "{{ item.name_path }}"
+    regexp: "{{ item.name_regex }}"
+    replace: "{{ item.name_line }}"
+  with_items:
+    - { name_regex: '/usr/bin', name_place: '{{ DOWNLOAD_DIR }}', name_path: '/etc/systemd/system/kubelet.service' }
+    - { name_regex: '/usr/bin', name_place: '{{ DOWNLOAD_DIR }}', name_path: '/etc/systemd/system/kubelet.service.d/10-kubeadm.conf' }
+
+
+- name: Unarchive a cni file that is already on the remote machine
+  unarchive:
+    src: /home/ubuntu/kubernetes/ansible/kuber-cluster/roles/kuber_kubeadm_let_ctl_secondary/files/cni-plugins-linux-{{ ARCH }}-{{ CNI_VERSION }}.tgz
+    dest: "{{ CNI_DIRECTORY }}"
+    remote_src: no
+
+
+- name: Unarchive a crictl file that is already on the remote machine
+  unarchive:
+    src: /home/ubuntu/kubernetes/ansible/kuber-cluster/roles/kuber_kubeadm_let_ctl_secondary/files/crictl-${CRICTL_VERSION}-linux-${ARCH}.tar.gz
+    dest: "{{ DOWNLOAD_DIR }}"
+    remote_src: no
+
+
+- name: copy kubeadm, kubectl and kubelet to remote machine
+  copy:
+    src: /home/ubuntu/kubernetes/ansible/kuber-cluster/roles/kuber_kubeadm_let_ctl_secondary/files/{{ item }}
+    dest: "{{ DOWNLOAD_DIR }}/{{ item }}"
+    mode: +x
+  with_items:
+    - kubeadm
+    - kubelet
+    - kubectl
+
+
+}
+
+
+
+
