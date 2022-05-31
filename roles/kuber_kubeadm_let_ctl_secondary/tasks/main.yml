@@ -34,8 +34,11 @@
 
 - name: copy kubeadm, kubectl and kubelet to remote machine
   copy:
-    src: /home/ubuntu/kubernetes/ansible/kuber-cluster/roles/kuber_kubeadm_let_ctl_secondary/files/kubelet.service
-    dest: /etc/systemd/system/kubelet.service
+    src: "{{ item.name_src }}"
+    dest: "{{ item.name_dest }}"
+  with_items:
+    - { name_src: '/home/ubuntu/kubernetes/ansible/kuber-cluster/roles/kuber_kubeadm_let_ctl_secondary/files/kubelet.service', name_dest: '/etc/systemd/system/kubelet.service' }
+    - { name_src: '/home/ubuntu/kubernetes/ansible/kuber-cluster/roles/kuber_kubeadm_let_ctl_secondary/files/10-kubeadm.conf', name_dest: '/etc/systemd/system/kubelet.service.d/10-kubeadm.conf' }
 
 
 - name: cahnge setting of calico.yaml
@@ -73,7 +76,14 @@
     - kubectl
 
 
-}
+- name: restart kubelet
+  service:
+    name: kubelet
+    state: started
+    enabled: yes
+
+
+
 
 
 
