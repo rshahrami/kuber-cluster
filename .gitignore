@@ -1,4 +1,5 @@
 roles/docker/files/
 roles/java/files/jdk-8u221-linux-x64.tar.gz
+roles/kuber_kubeadm_let_ctl_secondary/files/*
 
 kuber-cluster-env

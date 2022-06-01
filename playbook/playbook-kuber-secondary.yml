@@ -1,6 +1,6 @@
 - hosts: nodes_kuber
   remote_user: ansible
-  become: yes
+  become: false
   become_method: sudo
   roles:
   # - update_all

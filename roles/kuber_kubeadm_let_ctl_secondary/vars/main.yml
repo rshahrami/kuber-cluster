@@ -5,9 +5,13 @@ CNI_VERSION: "v0.8.2"
 CRICTL_VERSION: "v1.22.0"
 ARCH: "amd64"
 
-CNI_DIRECTORY: /opt/cni/bin
+CNI_DIR: /opt/cni/bin
 DOWNLOAD_DIR: /usr/local/bin
 
 RELEASE: v1.23.5
 
 RELEASE_VERSION: "v0.4.0"
+
+FILE_DIR: "/home/ubuntu/kubernetes/ansible/kuber-cluster/roles/kuber_kubeadm_let_ctl_secondary/files/"
+
+SERVICE_DIR: "/etc/systemd/system/"
