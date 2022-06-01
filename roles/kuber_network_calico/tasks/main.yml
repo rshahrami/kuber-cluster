@@ -1,13 +1,10 @@
 ---
 # tasks file for kuber_network_calico
 
-# - name: curl calico yml for config
-#   get_url:
-#     url: https://docs.projectcalico.org/manifests/calico.yaml
-#     dest: /root/calico.yaml
-
-# - name: curl calico yml for config
-#   local_action: get_url url=https://docs.projectcalico.org/manifests/calico.yaml dest=roles/kuber_network_calico/files/calico.yaml
+- name: copy docker rpm file to server
+  copy:
+    src: /home/ubuntu/kubernetes/ansible/kuber-cluster/roles/kuber_network_calico/files/calico.yaml
+    dest: /root/
 
 - name: cahnge setting of calico.yaml
   replace:

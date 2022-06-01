@@ -4,3 +4,5 @@
 network_cidr: '172.16.0.0/20'
 
 apiserver_address: '192.168.143.21'
+
+KUBER_VERSION: "v1.23.5"

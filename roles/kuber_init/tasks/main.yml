@@ -2,7 +2,7 @@
 # tasks file for kuber_init
 
 - name: initialize kubernetes cluster using kubeadm
-  command: kubeadm init --pod-network-cidr="{{ network_cidr }}" --node-name kuber-master --apiserver-advertise-address="{{ apiserver_address }}"
+  command: kubeadm init --pod-network-cidr="{{ network_cidr }}" --node-name=kuber-master --apiserver-advertise-address="{{ apiserver_address }}" --kubernetes-version="{{ KUBER_VERSION }}"
 
 - name: setup kubeconfig non-root user
   shell: "{{ item }}"

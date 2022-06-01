@@ -42,4 +42,12 @@
     reboot_timeout: 180
     pre_reboot_delay: 10
     post_reboot_delay: 20
-  
+
+- name: Update all packages to their latest version
+  apt:
+    name: "{{ item }}"
+    state: latest
+  with_items:
+    - firewalld
+    - conntrack
+  when: ansible_distribution == "Ubuntu"

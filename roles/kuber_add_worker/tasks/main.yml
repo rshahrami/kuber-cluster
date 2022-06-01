@@ -4,17 +4,20 @@
 
 - name: copy the join command to worker nodes
   copy:
-    src: roles/kuber_take_token/files/join-command
+    src: /home/ubuntu/kubernetes/ansible/kuber-cluster/roles/kuber_take_token/files/join-command
     dest: /root/join-command.sh
     mode: 0777
 
 - name: join node to cluster
   shell: |
     sh /root/join-command.sh
+  when: ansible_distribution == 'CentOS' or ansible_distribution == 'Red Hat Enterprise Linux'
 
-
-- name: remove join-command in local machin or master nor
-  local_action: file path=roles/kuber_take_token/files/join-command state=absent
+  
+- name: join node to cluster
+  shell: |
+    bash /root/join-command.sh
+  when: ansible_distribution == "Ubuntu"
 
 
 - name: remove join-command.sh in worker node
