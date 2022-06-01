@@ -73,5 +73,17 @@ We download the packages according to our desired version. To download the packa
 https://packages.cloud.google.com/apt/
   
 ```  
+
+
+# Download all package for other distribution os
+
+We use the following address to download desired versions of kubectl, kubeadm and kubelet. the ARCH varible is architecture of os
+
+```bash
   
+https://storage.googleapis.com/kubernetes-release/release/${RELEASE}/bin/linux/${ARCH}/{kubeadm,kubelet,kubectl}
+  
+``` 
+
+
 </div>
