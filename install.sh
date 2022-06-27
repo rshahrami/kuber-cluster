@@ -1,3 +1,11 @@
+
+
+
+
+
+
+
+#######################################################################################################
 #!/bin/bash
 
 # # find image version from calico.yaml
@@ -30,8 +38,8 @@
 #   sleep 5
 # done < $(pwd)/ipList
 
-ansible-playbook -vv $(pwd)/playbook/playbook-kuber.yml
-sleep 5
+# ansible-playbook -vv $(pwd)/playbook/playbook-kuber.yml
+# sleep 5
 # ansible-playbook -vv $(pwd)/playbook/playbook-kuber-master.yml
 # sleep 5
 # ansible-playbook -vv $(pwd)/playbook/playbook-kuber-slave.yml

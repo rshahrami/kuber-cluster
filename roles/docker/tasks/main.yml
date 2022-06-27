@@ -17,9 +17,9 @@
     src: "{{ item.name }}"
     dest: /root/
   loop:
-    - { name: "{{ dockerFileDirectory }}/docker/files/docker-ce_19.03.15_3-0_ubuntu-focal_amd64.deb", owner: administrator, group: administrator}
-    - { name: "{{ dockerFileDirectory }}/docker/files/docker-ce-cli_19.03.15_3-0_ubuntu-focal_amd64.deb", owner: administrator, group: administrator}
-    - { name: "{{ dockerFileDirectory }}/docker/files/containerd.io_1.6.4-1_amd64.deb", owner: administrator, group: administrator}
+    - { name: "{{ dockerFileDirectory }}/docker/files/docker-ce_20.10.17_3-0_ubuntu-focal_amd64.deb", owner: administrator, group: administrator}
+    - { name: "{{ dockerFileDirectory }}/docker/files/docker-ce-cli_20.10.17_3-0_ubuntu-focal_amd64.deb", owner: administrator, group: administrator}
+    - { name: "{{ dockerFileDirectory }}/docker/files/containerd.io_1.6.6-1_amd64.deb", owner: administrator, group: administrator}
   when: ansible_distribution == "Ubuntu"
 
 
@@ -40,10 +40,11 @@
     deb: "{{ item.name }}"
     state: present
   with_items:
-    - { name: /root/docker-ce-cli_19.03.15_3-0_ubuntu-focal_amd64.deb }
-    - { name: /root/containerd.io_1.6.4-1_amd64.deb }
-    - { name: /root/docker-ce_19.03.15_3-0_ubuntu-focal_amd64.deb }
+    - { name: /root/docker-ce-cli_20.10.17_3-0_ubuntu-focal_amd64.deb }
+    - { name: /root/containerd.io_1.6.6-1_amd64.deb }
+    - { name: /root/docker-ce_20.10.17_3-0_ubuntu-focal_amd64.deb }
   when: ansible_distribution == "Ubuntu"
+
 
 
 - name: enable service docker
@@ -75,22 +76,37 @@
     append: yes
 
 
+- name: get users with flag
+  shell: cat "{{ dockerFileDirectory }}/docker/files/tarList"
+  register: tarList
+  delegate_to: localhost
+
+
+- name: copy docker rpm file to server
+  copy:
+    src: "{{ dockerFileDirectory }}/docker/files/{{ item }}"
+    dest: /root/
+  loop: "{{ tarList.stdout_lines }}"
+
 
 - name: load docker images 
   shell: docker load < /root/{{ item }}
-  with_items:
-  - calico-cni-v3.22.2.tar
-  - calico-kube-controllers-v3.22.2.tar
-  - calico-node-v3.22.2.tar
-  - calico-pod2daemon-flexvol-v3.22.2.tar
-  - coredns-v1.8.6.tar
-  - etcd-3.5.1-0.tar
-  - kube-apiserver-v1.23.5.tar
-  - kube-controller-manager-v1.23.5.tar
-  - kube-proxy-v1.23.5.tar
-  - kube-scheduler-v1.23.5.tar
-  - pause-3.6.tar
+  loop: "{{ tarList.stdout_lines }}"
+  # - calico-cni-v3.22.2.tar
+  # - calico-kube-controllers-v3.22.2.tar
+  # - calico-node-v3.22.2.tar
+  # - calico-pod2daemon-flexvol-v3.22.2.tar
+  # - coredns-v1.8.6.tar
+  # - etcd-3.5.1-0.tar
+  # - kube-apiserver-v1.23.5.tar
+  # - kube-controller-manager-v1.23.5.tar
+  # - kube-proxy-v1.23.5.tar
+  # - kube-scheduler-v1.23.5.tar
+  # - pause-3.6.tar
 
+
+- name: load docker images 
+  shell: rm -rf /root/*.tar
 
 
 - name: Reboot
