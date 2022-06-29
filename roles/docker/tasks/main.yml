@@ -47,6 +47,31 @@
 
 
 
+- name: Creates directory for daemon docker
+  file:
+    path: /etc/docker/
+    state: directory
+
+
+- name: Creates daemon.json file for docker
+  file:
+    path: /etc/docker/daemon.json
+    state: touch
+
+
+# - name: set cgroupdrive for docker
+#   shell: |
+#     cat <<EOF | sudo tee -a /etc/docker/daemon.json
+
+#     {
+#       "exec-opts": ["native.cgroupdriver=systemd"]
+#     }
+
+#     EOF
+
+
+
+
 - name: enable service docker
   systemd:
     name: "{{ item }}"
@@ -74,6 +99,32 @@
     name: administrator
     groups: [docker]
     append: yes
+
+
+
+
+- name: copy containerd config to file 
+  shell: |
+    containerd config default | tee /etc/containerd/config.toml
+
+
+
+- name: set systemdcgroup to true in containerd config
+  replace:
+    path: /etc/containerd/config.toml
+    regexp: "{{ item.name_regex }}"
+    replace: "{{ item.name_line }}"
+  with_items:
+    - { name_regex: '            SystemdCgroup = false', name_line: '            SystemdCgroup = true' }
+
+
+
+- name: start service docker
+  systemd:
+    state: restarted
+    name: containerd
+
+
 
 
 - name: get users with flag
@@ -107,6 +158,16 @@
 
 - name: load docker images 
   shell: rm -rf /root/*.tar
+
+
+- name: load docker images 
+  shell: rm -rf /root/*.deb
+  when: ansible_distribution == "Ubuntu"
+
+
+- name: load docker images 
+  shell: rm -rf /root/*.rpm
+  when: ansible_distribution == 'CentOS' or ansible_distribution == 'Red Hat Enterprise Linux'
 
 
 - name: Reboot

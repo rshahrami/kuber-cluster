@@ -19,7 +19,9 @@ do
         docker save $line > $dockerDirectory/$image
         echo " download $image "
     else
-        echo " the $image exists"
+        sudo rm $dockerDirectory/$image
+        docker save $line > $dockerDirectory/$image
+        # echo " the $image exists"
     fi
 
     for i in {1..2}

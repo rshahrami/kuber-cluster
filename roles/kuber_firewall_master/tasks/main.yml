@@ -19,3 +19,10 @@
     # - { port: "8285", porto: "udp" }
     # - { port: "8472", porto: "udp" }
   # when: ansible_distribution == 'CentOS' or ansible_distribution == 'Red Hat Enterprise Linux'
+
+
+- firewalld:
+    masquerade: yes
+    state: enabled
+    permanent: yes
+    immediate: yes

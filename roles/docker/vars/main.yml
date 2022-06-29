@@ -1,3 +1,3 @@
 # dockerFileDirectory: /home/ubuntu/kubernetes/ansible/kuber-cluster/roles
 
-dockerFileDirectory: $PWD/roles
+dockerFileDirectory: /home/ubuntu/kubernetes/ansible/kuber-cluster/roles
